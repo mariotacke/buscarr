@@ -124,25 +124,29 @@ module.exports = function(webpackEnv) {
       : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry: [
-      // Include an alternative client for WebpackDevServer. A client's job is to
-      // connect to WebpackDevServer by a socket and get notified about changes.
-      // When you save a file, the client will either apply hot updates (in case
-      // of CSS changes), or refresh the page (in case of JS changes). When you
-      // make a syntax error, this client will display a syntax error overlay.
-      // Note: instead of the default WebpackDevServer client, we use a custom one
-      // to bring better experience for Create React App users. You can replace
-      // the line below with these two lines if you prefer the stock client:
-      // require.resolve('webpack-dev-server/client') + '?/',
-      // require.resolve('webpack/hot/dev-server'),
-      isEnvDevelopment &&
+    entry: {
+      main: [
+        // Include an alternative client for WebpackDevServer. A client's job is to
+        // connect to WebpackDevServer by a socket and get notified about changes.
+        // When you save a file, the client will either apply hot updates (in case
+        // of CSS changes), or refresh the page (in case of JS changes). When you
+        // make a syntax error, this client will display a syntax error overlay.
+        // Note: instead of the default WebpackDevServer client, we use a custom one
+        // to bring better experience for Create React App users. You can replace
+        // the line below with these two lines if you prefer the stock client:
+        // require.resolve('webpack-dev-server/client') + '?/',
+        // require.resolve('webpack/hot/dev-server'),
+        isEnvDevelopment &&
         require.resolve('react-dev-utils/webpackHotDevClient'),
-      // Finally, this is your app's code:
-      paths.appIndexJs,
-      // We include the app code last so that if there is a runtime error during
-      // initialization, it doesn't blow up the WebpackDevServer client, and
-      // changing JS code would still trigger a refresh.
-    ].filter(Boolean),
+        // Finally, this is your app's code:
+        paths.appIndexJs,
+
+        // We include the app code last so that if there is a runtime error during
+        // initialization, it doesn't blow up the WebpackDevServer client, and
+        // changing JS code would still trigger a refresh.
+      ].filter(Boolean),
+      content: paths.contentIndexJs,
+    },
     output: {
       // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,
@@ -150,13 +154,9 @@ module.exports = function(webpackEnv) {
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
-      filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
+      filename: 'static/js/[name].js',
       // There are also additional JS chunk files if you use code splitting.
-      chunkFilename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].chunk.js'
-        : isEnvDevelopment && 'static/js/[name].chunk.js',
+      chunkFilename: 'static/js/[name].chunk.js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
       // We use "/" in development.
       publicPath: publicPath,
@@ -301,7 +301,7 @@ module.exports = function(webpackEnv) {
               options: {
                 formatter: require.resolve('react-dev-utils/eslintFormatter'),
                 eslintPath: require.resolve('eslint'),
-                
+
               },
               loader: require.resolve('eslint-loader'),
             },
@@ -334,7 +334,7 @@ module.exports = function(webpackEnv) {
                 customize: require.resolve(
                   'babel-preset-react-app/webpack-overrides'
                 ),
-                
+
                 plugins: [
                   [
                     require.resolve('babel-plugin-named-asset-import'),
@@ -373,7 +373,7 @@ module.exports = function(webpackEnv) {
                 ],
                 cacheDirectory: true,
                 cacheCompression: isEnvProduction,
-                
+
                 // If an error happens in a package, it's possible to be
                 // because it was compiled. Thus, we don't want the browser
                 // debugger to show the original code. Instead, the code
@@ -475,6 +475,9 @@ module.exports = function(webpackEnv) {
           {
             inject: true,
             template: paths.appHtml,
+            excludeChunks: [
+              'content'
+            ],
           },
           isEnvProduction
             ? {
