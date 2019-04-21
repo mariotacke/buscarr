@@ -4,13 +4,8 @@
   "author": "Mario Tacke",
   "version": "1.0.0",
   "description": "¡Buscarr!",
-  "icons": {
-    "16": "favicon.ico",
-    "48": "favicon.ico",
-    "128": "favicon.ico"
-  },
   "browser_action": {
-    "default_popup": "index.html",
+    "default_popup": "popup/popup.html",
     "default_title": "Open the popup"
   },
   "permissions": [
@@ -20,7 +15,7 @@
   "content_scripts": [
     {
       "matches": ["*://www.rottentomatoes.com/m/*"],
-      "js": ["static/js/runtime~content.js"],
+      "js": ["content/content.js"],
       "run_at": "document_idle",
       "all_frames": false
     }
