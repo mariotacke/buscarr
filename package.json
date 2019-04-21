@@ -1,7 +1,7 @@
 {
   "name": "buscarr",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
