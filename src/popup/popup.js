@@ -1,16 +1,5 @@
-const { search } = require('../lib/api');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.js';
 
-window.addEventListener('DOMContentLoaded', function () {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, { from: 'popup', subject: 'info' }, async function ({ movie }) {
-      const result = await search(movie);
-      const imageBaseUrl = 'https://image.tmdb.org/t/p/w200';
-
-      const img = document.createElement('img');
-
-      img.src = imageBaseUrl + result[0].posterPath;
-
-      document.body.appendChild(img);
-    });
-  });
-});
+ReactDOM.render(<App />, document.getElementById('root'));
