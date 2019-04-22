@@ -1,10 +1,9 @@
 const Bundler = require('parcel-bundler');
-const fs = require('fs-extra');
-const path = require('path');
 
 const entryFiles = [
   './src/content/content.js',
   './src/popup/popup.html',
+  './src/background/background.js',
 ];
 
 const options = {
