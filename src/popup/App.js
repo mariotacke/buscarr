@@ -15,6 +15,10 @@ class App extends Component {
     window.addEventListener('DOMContentLoaded', this.handleDomContentLoaded.bind(this));
   }
 
+  componentWillUnmount () {
+    window.removeEventListener('DOMContentLoaded', this.handleDomContentLoaded.bind(this));
+  }
+
   handleDomContentLoaded () {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { from: 'popup', subject: 'info' }, async ({ movie }) => {
