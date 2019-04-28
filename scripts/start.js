@@ -7,11 +7,11 @@ const entryFiles = [
 ];
 
 const options = {
-  hmr: false,
+  sourceMaps: false,
 };
 
 (async function () {
   const bundler = new Bundler(entryFiles, options);
 
-  const bundle = await bundler.bundle();
+  await bundler.serve(5000);
 })();
