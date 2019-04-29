@@ -1,4 +1,4 @@
-const isChromeExtension = typeof chrome.storage !== 'undefined';
+import { isChromeExtension } from '../lib/utils';
 
 const optionsKey = 'options';
 

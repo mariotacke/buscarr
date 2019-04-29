@@ -20,17 +20,17 @@ class Options extends Component {
 
     this.state = {
       hostname: '',
-      password: '',
+      apiKey: '',
       showPassword: false,
     };
   }
 
   async componentWillMount () {
-    const { hostname, password } = await optionsService.get();
+    const { hostname, apiKey } = await optionsService.get();
 
     this.setState({
       hostname,
-      password,
+      apiKey,
     });
   }
 
@@ -45,7 +45,7 @@ class Options extends Component {
   async handleSave () {
     await optionsService.set({
       hostname: this.state.hostname,
-      password: this.state.password,
+      apiKey: this.state.apiKey,
     });
   }
 
@@ -66,8 +66,8 @@ class Options extends Component {
           <Input
             id="ombi-api-key"
             type={this.state.showPassword ? 'text' : 'password'}
-            value={this.state.password}
-            onChange={this.handleChange('password').bind(this)}
+            value={this.state.apiKey}
+            onChange={this.handleChange('apiKey').bind(this)}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
