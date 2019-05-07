@@ -14,19 +14,29 @@ class App extends Component {
     };
   }
 
+  navigate (page = 'search') {
+    this.setState({ page });
+  }
+
   render () {
+    const navigate = this.navigate.bind(this);
+
     const style = {
       // during development, show popup border
       border: !isChromeExtension ? '1px solid black' : null,
-    }
+    };
+
+    const searchStyle = {
+      display: this.state.page === 'search' ? undefined : 'none',
+    };
 
     return (
       <Fragment>
         <CssBaseline />
         <div className="container" style={style}>
           <div className="page">
-            {this.state.page === 'search' ? <Search /> : null}
-            {this.state.page === 'options' ? <Options /> : null}
+            <Search navigate={navigate} style={searchStyle} />
+            {this.state.page === 'options' ? <Options navigate={navigate} /> : null}
           </div>
           <Tabs />
         </div>

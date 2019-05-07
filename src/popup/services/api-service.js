@@ -1,19 +1,20 @@
 import optionsService from './options-service';
 
-function createRequestOptions (apiKey) {
+function createRequestOptions (apiKey, username) {
   return {
     mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
       ApiKey: apiKey,
+      UserName: username,
     },
   };
 }
 
 export async function search (movie) {
-  const { hostname, apiKey } = await optionsService.get();
+  const { hostname, apiKey, username } = await optionsService.get();
 
-  const options = createRequestOptions(apiKey);
+  const options = createRequestOptions(apiKey, username);
 
   const response = await fetch(`${hostname}/api/v1/search/movie/${movie}`, options);
 
@@ -21,9 +22,9 @@ export async function search (movie) {
 }
 
 export async function request (theMovieDbId) {
-  const { hostname, apiKey } = await optionsService.get();
+  const { hostname, apiKey, username } = await optionsService.get();
 
-  const options = Object.assign({}, createRequestOptions(apiKey), {
+  const options = Object.assign({}, createRequestOptions(apiKey, username), {
     method: 'POST',
     body: JSON.stringify({
       theMovieDbId

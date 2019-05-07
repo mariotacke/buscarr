@@ -10,7 +10,7 @@ import api from '../../services/api-service';
 
 const styles = (theme) => ({
   button: {
-    margin: theme.spacing * 2,
+    margin: theme.spacing.unit * 2,
   },
   progress: {
     margin: theme.spacing.unit * 2,
@@ -22,6 +22,7 @@ const styles = (theme) => ({
     width: '100%',
   },
   contentContainer: {
+    margin: theme.spacing.unit * 2,
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
@@ -78,7 +79,7 @@ class Search extends Component {
   }
 
   render () {
-    const { classes } = this.props;
+    const { classes, navigate, style } = this.props;
 
     const progress =
       <div className={classes.progressContainer}>
@@ -86,7 +87,7 @@ class Search extends Component {
       </div>;
 
     const content =
-      <div className={classes.contentContainer}>
+      <div className={classes.contentContainer} style={style}>
         <div>
           <img src={this.state.posterPath} />
         </div>
@@ -94,6 +95,12 @@ class Search extends Component {
           {this.state.title} ({getYearFromUtcString(this.state.releaseDate)})
         </Typography>
         <DialogActions>
+          <Button
+            color="secondary"
+            onClick={() => navigate('options')}
+          >
+            Options
+          </Button>
           <Button
             color="primary"
             autoFocus
