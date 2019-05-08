@@ -1,17 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
+import IconButton from '@material-ui/core/IconButton';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import ChevronRight from '@material-ui/icons/ChevronRight';
 import { getYearFromUtcString, imageBaseUrl } from '../../lib/utils';
 import events from '../../services/events-service';
 import api from '../../services/api-service';
 
 const styles = (theme) => ({
-  button: {
-    margin: theme.spacing.unit * 2,
-  },
   progress: {
     margin: theme.spacing.unit * 2,
   },
@@ -21,11 +21,25 @@ const styles = (theme) => ({
     alignItems: 'center',
     width: '100%',
   },
-  contentContainer: {
-    margin: theme.spacing.unit * 2,
+  container: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
-    width: '100%',
+  },
+  poster: {
+    width: 160,
+  },
+  carousel: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing.unit,
+  },
+  title: {
+    fontSize: '1rem',
+    color: theme.typography.h6.color,
+    fontWeight: theme.typography.fontWeightMedium,
+    fontFamily: theme.typography.fontFamily,
   },
 });
 
@@ -35,9 +49,8 @@ class Search extends Component {
 
     this.state = {
       isLoading: false,
-      posterPath: '',
-      title: '',
-      releaseDate: '',
+      searchResults: [],
+      position: 0,
       available: false,
       requested: false,
       theMovieDbId: null,
@@ -63,23 +76,45 @@ class Search extends Component {
   handleSearchResult ({ detail }) {
     this.setState({
       isLoading: false,
-      posterPath: imageBaseUrl + detail[0].posterPath,
-      title: detail[0].title,
+      searchResults: detail,
+      position: 0,
       releaseDate: detail[0].releaseDate,
       available: detail[0].available,
       requested: detail[0].requested,
       theMovieDbId: detail[0].theMovieDbId,
     });
+
+    console.log(detail);
+  }
+
+  handleNextClick () {
+    const { position, searchResults } = this.state;
+
+    this.setState({
+      position: position === searchResults.length - 1 ? 0 : position + 1,
+    });
+  }
+
+  handlePreviousClick () {
+    const { position, searchResults } = this.state;
+
+    this.setState({
+      position: position === 0 ? searchResults.length - 1 : position - 1,
+    });
   }
 
   async handleAddClick () {
-    const result = await api.request(this.state.theMovieDbId);
+    const result = await api.request(searchResults[position].theMovieDbId);
 
     console.log(result);
   }
 
   render () {
     const { classes, navigate, style } = this.props;
+    const { position, searchResults } = this.state;
+
+    const movie = searchResults[position] || {};
+    const hasMultipleResults = searchResults.length > 1;
 
     const progress =
       <div className={classes.progressContainer}>
@@ -87,13 +122,23 @@ class Search extends Component {
       </div>;
 
     const content =
-      <div className={classes.contentContainer} style={style}>
-        <div>
-          <img src={this.state.posterPath} />
-        </div>
-        <Typography variant="h6" gutterBottom>
-          {this.state.title} ({getYearFromUtcString(this.state.releaseDate)})
-        </Typography>
+      <div className={classes.container} style={style}>
+        <DialogContent>
+          <div className={classes.carousel}>
+            {hasMultipleResults ?
+              <IconButton style={{ marginRight: 5 }} onClick={this.handlePreviousClick.bind(this)}>
+                <ChevronLeft fontSize="small" />
+              </IconButton> : null}
+            <img src={imageBaseUrl + movie.posterPath} className={classes.poster} />
+            {hasMultipleResults ?
+              <IconButton style={{ marginLeft: 5 }} onClick={this.handleNextClick.bind(this)}>
+                <ChevronRight fontSize="small" />
+              </IconButton> : null}
+          </div>
+          <div className={classes.title}>
+            {movie.title} ({getYearFromUtcString(movie.releaseDate)})
+          </div>
+        </DialogContent>
         <DialogActions>
           <Button
             color="secondary"
@@ -115,7 +160,9 @@ class Search extends Component {
       <Fragment>
         {this.state.isLoading
           ? progress
-          : content
+          : searchResults.length
+            ? content
+            : null
         }
       </Fragment>
     );
