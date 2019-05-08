@@ -78,10 +78,6 @@ class Search extends Component {
       isLoading: false,
       searchResults: detail,
       position: 0,
-      releaseDate: detail[0].releaseDate,
-      available: detail[0].available,
-      requested: detail[0].requested,
-      theMovieDbId: detail[0].theMovieDbId,
     });
 
     console.log(detail);
@@ -104,6 +100,8 @@ class Search extends Component {
   }
 
   async handleAddClick () {
+    const { position, searchResults } = this.state;
+
     const result = await api.request(searchResults[position].theMovieDbId);
 
     console.log(result);
@@ -143,15 +141,16 @@ class Search extends Component {
           <Button
             color="secondary"
             onClick={() => navigate('options')}
-          >
+            >
             Options
           </Button>
           <Button
+            disabled={movie.available || movie.requested}
             color="primary"
             autoFocus
             onClick={this.handleAddClick.bind(this)}
           >
-            Add
+            {movie.available ? 'Already Owned' : movie.requested ? 'Already Requested' : 'Add'}
           </Button>
         </DialogActions>
       </div>
