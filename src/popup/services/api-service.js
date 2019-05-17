@@ -36,7 +36,18 @@ export async function request (theMovieDbId) {
   return await response.json();
 }
 
+export async function info (theMovieDbId) {
+  const { hostname, apiKey, username } = await optionsService.get();
+
+  const options = createRequestOptions(apiKey, username);
+
+  const response = await fetch(`${hostname}/api/v1/search/movie/info/${theMovieDbId}`, options);
+
+  return await response.json();
+}
+
 module.exports = {
   search,
   request,
+  info,
 };

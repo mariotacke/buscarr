@@ -54,6 +54,7 @@ class Search extends Component {
       available: false,
       requested: false,
       theMovieDbId: null,
+      selectedMovie: {},
     };
   }
 
@@ -73,29 +74,60 @@ class Search extends Component {
     await events.queryTab();
   }
 
-  handleSearchResult ({ detail }) {
+  async handleSearchResult ({ detail: searchResults }) {
+    console.log(searchResults);
+
     this.setState({
-      isLoading: false,
-      searchResults: detail,
+      searchResults,
       position: 0,
     });
 
-    console.log(detail);
-  }
+    if (searchResults.length) {
+      const selectedMovie = await api.info(searchResults[0].theMovieDbId);
 
-  handleNextClick () {
-    const { position, searchResults } = this.state;
+      console.log(selectedMovie);
+
+      this.setState({
+        selectedMovie,
+      });
+    }
 
     this.setState({
-      position: position === searchResults.length - 1 ? 0 : position + 1,
+      isLoading: false,
     });
   }
 
-  handlePreviousClick () {
+  async handleNextClick () {
     const { position, searchResults } = this.state;
+    const nextPosition = position === searchResults.length - 1 ? 0 : position + 1;
 
     this.setState({
-      position: position === 0 ? searchResults.length - 1 : position - 1,
+      position: nextPosition,
+      isLoading: true,
+    });
+
+    const selectedMovie = await api.info(searchResults[nextPosition].theMovieDbId);
+
+    this.setState({
+      selectedMovie,
+      isLoading: false,
+    });
+  }
+
+  async handlePreviousClick () {
+    const { position, searchResults } = this.state;
+    const previousPosition = position === 0 ? searchResults.length - 1 : position - 1;
+
+    this.setState({
+      position: previousPosition,
+      isLoading: true,
+    });
+
+    const selectedMovie = await api.info(searchResults[previousPosition].theMovieDbId);
+
+    this.setState({
+      selectedMovie,
+      isLoading: false,
     });
   }
 
@@ -109,9 +141,9 @@ class Search extends Component {
 
   render () {
     const { classes, navigate, style } = this.props;
-    const { position, searchResults } = this.state;
+    const { searchResults, selectedMovie } = this.state;
 
-    const movie = searchResults[position] || {};
+    const movie = selectedMovie || {};
     const hasMultipleResults = searchResults.length > 1;
 
     const progress =
