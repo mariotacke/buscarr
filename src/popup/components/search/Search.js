@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import { getYearFromUtcString, imageBaseUrl } from '../../lib/utils';
@@ -25,6 +26,7 @@ const styles = (theme) => ({
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
+    zIndex: 2,
   },
   poster: {
     width: 160,
@@ -41,6 +43,11 @@ const styles = (theme) => ({
     fontWeight: theme.typography.fontWeightMedium,
     fontFamily: theme.typography.fontFamily,
   },
+  paper: {
+    // ...theme.mixins.gutters(),
+    paddingTop: theme.spacing.unit,
+    paddingBottom: theme.spacing.unit,
+  },
 });
 
 class Search extends Component {
@@ -48,6 +55,7 @@ class Search extends Component {
     super(props);
 
     this.state = {
+      isHovered: false,
       isLoading: false,
       searchResults: [],
       position: 0,
@@ -56,16 +64,23 @@ class Search extends Component {
       theMovieDbId: null,
       selectedMovie: {},
     };
+
+    this.handleHover = this.handleHover.bind(this);
+    this.handleDOMContentLoaded = this.handleDOMContentLoaded.bind(this);
+    this.handleSearchResult = this.handleSearchResult.bind(this);
+    this.handleAddClick = this.handleAddClick.bind(this);
+    this.handlePreviousClick = this.handlePreviousClick.bind(this);
+    this.handleNextClick = this.handleNextClick.bind(this);
   }
 
   componentDidMount () {
-    window.addEventListener('DOMContentLoaded', this.handleDOMContentLoaded.bind(this));
-    window.addEventListener('search-result', this.handleSearchResult.bind(this));
+    window.addEventListener('DOMContentLoaded', this.handleDOMContentLoaded);
+    window.addEventListener('search-result', this.handleSearchResult);
   }
 
   componentWillUnmount () {
-    window.removeEventListener('DOMContentLoaded', this.handleDOMContentLoaded.bind(this));
-    window.removeEventListener('search-result', this.handleSearchResult.bind(this));
+    window.removeEventListener('DOMContentLoaded', this.handleDOMContentLoaded);
+    window.removeEventListener('search-result', this.handleSearchResult);
   }
 
   async handleDOMContentLoaded () {
@@ -139,9 +154,13 @@ class Search extends Component {
     console.log(result);
   }
 
+  handleHover (isHovered) {
+    this.setState({ isHovered });
+  }
+
   render () {
     const { classes, navigate, style } = this.props;
-    const { searchResults, selectedMovie } = this.state;
+    const { searchResults, selectedMovie, isHovered } = this.state;
 
     const movie = selectedMovie || {};
     const hasMultipleResults = searchResults.length > 1;
@@ -151,41 +170,80 @@ class Search extends Component {
         <CircularProgress className={classes.progress} />
       </div>;
 
+    const imageStyle = {
+      backgroundImage: `url('${imageBaseUrl}${movie.posterPath}')`,
+      width: 144,
+      height: 216,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'norepeat',
+      backgroundPosition: 'center center',
+      transition: 'transform .2s',
+    };
+
+    const backgroundStyle = {
+      backgroundImage: `url('${imageBaseUrl}${movie.posterPath}')`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'norepeat',
+      backgroundPosition: 'center center',
+      position: 'fixed',
+      left: 0,
+      right: 0,
+      height: 405,
+      zIndex: 1,
+      display: 'block',
+      opacity: 0.2,
+      filter: 'blur(3px)',
+    };
+
+    const zoom = { transform: 'scale(1.1)' };
+
     const content =
-      <div className={classes.container} style={style}>
-        <DialogContent>
-          <div className={classes.carousel}>
-            {hasMultipleResults ?
-              <IconButton style={{ marginRight: 5 }} onClick={this.handlePreviousClick.bind(this)}>
-                <ChevronLeft fontSize="small" />
-              </IconButton> : null}
-            <img src={imageBaseUrl + movie.posterPath} className={classes.poster} />
-            {hasMultipleResults ?
-              <IconButton style={{ marginLeft: 5 }} onClick={this.handleNextClick.bind(this)}>
-                <ChevronRight fontSize="small" />
-              </IconButton> : null}
-          </div>
-          <div className={classes.title}>
-            {movie.title} ({getYearFromUtcString(movie.releaseDate)})
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="secondary"
-            onClick={() => navigate('options')}
+      <Fragment>
+        <div style={backgroundStyle}></div>
+        <div className={classes.container}>
+          <DialogContent>
+            <div className={classes.carousel}>
+              {hasMultipleResults ?
+                <IconButton style={{ marginRight: 5 }} onClick={this.handlePreviousClick}>
+                  <ChevronLeft fontSize="small" />
+                </IconButton> : null}
+
+              <Paper
+                elevation={8}
+                className={classes.paper}
+                style={{...imageStyle, ...(!isHovered || zoom)}}
+                onMouseEnter={() => this.handleHover(true)}
+                onMouseLeave={() => this.handleHover(false)}
+              >
+              </Paper>
+
+              {hasMultipleResults ?
+                <IconButton style={{ marginLeft: 5 }} onClick={this.handleNextClick}>
+                  <ChevronRight fontSize="small" />
+                </IconButton> : null}
+            </div>
+            <div className={classes.title}>
+              {movie.title} ({getYearFromUtcString(movie.releaseDate)})
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button variant="outlined"
+              color="secondary"
+              onClick={() => navigate('options')}
+              >
+              Options
+            </Button>
+            <Button variant={movie.available || movie.requested ? "text" : "outlined"}
+              disabled={movie.available || movie.requested}
+              color="primary"
+              autoFocus
+              onClick={this.handleAddClick}
             >
-            Options
-          </Button>
-          <Button
-            disabled={movie.available || movie.requested}
-            color="primary"
-            autoFocus
-            onClick={this.handleAddClick.bind(this)}
-          >
-            {movie.available ? 'Already Owned' : movie.requested ? 'Already Requested' : 'Add'}
-          </Button>
-        </DialogActions>
-      </div>
+              {movie.available ? 'Already Owned' : movie.requested ? 'Already Requested' : 'Add'}
+            </Button>
+          </DialogActions>
+        </div>
+      </Fragment>;
 
     return (
       <Fragment>
