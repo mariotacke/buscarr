@@ -17,6 +17,7 @@ const styles = (theme) => ({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
+    zIndex: 10,
   },
 });
 
@@ -59,10 +60,10 @@ class Options extends Component {
   }
 
   render () {
-    const { classes, navigate } = this.props;
+    const { classes, navigate, style } = this.props;
 
     return (
-      <div className={classes.container}>
+      <div className={classes.container} style={style}>
         <DialogContent>
           <FormControl>
             <InputLabel htmlFor="ombi-api-hostname">API Hostname</InputLabel>

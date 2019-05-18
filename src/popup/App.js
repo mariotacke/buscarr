@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import Options from './components/options';
 import Search from './components/search';
@@ -26,7 +27,6 @@ class App extends Component {
 
   navigate (page = 'search') {
     this.setState({ page });
-    console.log(this.state);
   }
 
   render () {
@@ -37,18 +37,14 @@ class App extends Component {
       border: !isChromeExtension ? '1px solid black' : null,
     };
 
-    const searchStyle = {
-      display: this.state.page === 'search' ? undefined : 'none',
-    };
-
     return (
       <Fragment>
         <CssBaseline />
         <MuiThemeProvider theme={theme}>
           <div className="container" style={style}>
             <div className="page">
-              <Search navigate={navigate} style={searchStyle} />
-              {this.state.page === 'options' ? <Options navigate={navigate} /> : null}
+              <Search navigate={navigate} style={{ display: `${this.state.page === 'search' ? 'flex' : 'none'}`}} />
+              <Options navigate={navigate} style={{ display: `${this.state.page === 'options' ? 'flex' : 'none'}` }} />
             </div>
             <Tabs />
           </div>

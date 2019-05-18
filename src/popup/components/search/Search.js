@@ -44,7 +44,6 @@ const styles = (theme) => ({
     fontFamily: theme.typography.fontFamily,
   },
   paper: {
-    // ...theme.mixins.gutters(),
     paddingTop: theme.spacing.unit,
     paddingBottom: theme.spacing.unit,
   },
@@ -200,7 +199,7 @@ class Search extends Component {
     const content =
       <Fragment>
         <div style={backgroundStyle}></div>
-        <div className={classes.container}>
+        <div className={classes.container} style={style}>
           <DialogContent>
             <div className={classes.carousel}>
               {hasMultipleResults ?
@@ -251,7 +250,7 @@ class Search extends Component {
           ? progress
           : searchResults.length
             ? content
-            : null
+            : <div>Hello</div>
         }
       </Fragment>
     );
