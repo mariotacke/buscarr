@@ -8,6 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
 import ChevronRight from '@material-ui/icons/ChevronRight';
+import green from '@material-ui/core/colors/green';
 import { getYearFromUtcString, imageBaseUrl } from '../../lib/utils';
 import events from '../../services/events-service';
 import api from '../../services/api-service';
@@ -47,6 +48,17 @@ const styles = (theme) => ({
     paddingTop: theme.spacing.unit,
     paddingBottom: theme.spacing.unit,
   },
+  wrapper: {
+    position: 'relative',
+  },
+  buttonProgress: {
+    color: green[500],
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
 });
 
 class Search extends Component {
@@ -54,12 +66,11 @@ class Search extends Component {
     super(props);
 
     this.state = {
+      isAdding: false,
       isHovered: false,
       isLoading: false,
       searchResults: [],
       position: 0,
-      available: false,
-      requested: false,
       theMovieDbId: null,
       selectedMovie: {},
     };
@@ -146,11 +157,20 @@ class Search extends Component {
   }
 
   async handleAddClick () {
-    const { position, searchResults } = this.state;
+    const { position, searchResults, selectedMovie } = this.state;
 
-    const result = await api.request(searchResults[position].theMovieDbId);
+    this.setState({ isAdding: true });
 
-    console.log(result);
+    const response = await api.request(searchResults[position].theMovieDbId);
+
+    if (response.result) {
+      this.setState({
+        isAdding: false,
+        selectedMovie: Object.assign({}, selectedMovie, { requested: true }),
+      });
+    } else {
+      this.setState({ isAdding: false });
+    }
   }
 
   handleHover (isHovered) {
@@ -159,7 +179,7 @@ class Search extends Component {
 
   render () {
     const { classes, navigate, style } = this.props;
-    const { searchResults, selectedMovie, isHovered } = this.state;
+    const { searchResults, selectedMovie, isHovered, isAdding } = this.state;
 
     const movie = selectedMovie || {};
     const hasMultipleResults = searchResults.length > 1;
@@ -232,14 +252,29 @@ class Search extends Component {
               >
               Options
             </Button>
-            <Button variant={movie.available || movie.requested ? "text" : "outlined"}
-              disabled={movie.available || movie.requested}
-              color="primary"
-              autoFocus
-              onClick={this.handleAddClick}
-            >
-              {movie.available ? 'Already Owned' : movie.requested ? 'Already Requested' : 'Add'}
-            </Button>
+            {movie.available || movie.requested ?
+              <Button variant="text"
+                disabled={movie.available || movie.requested}
+                color="primary"
+              >
+                {movie.available ? 'Already Owned' : movie.requested ? 'Already Requested' : null}
+              </Button> : null
+            }
+
+            {!movie.available && !movie.requested ?
+              <div className={classes.wrapper}>
+                <Button variant="outlined"
+                  disabled={isAdding}
+                  color="primary"
+                  autoFocus
+                  onClick={this.handleAddClick}
+                >
+                  {isAdding ? 'Adding' : 'Add'}
+                </Button>
+                {isAdding && <CircularProgress size={24} className={classes.buttonProgress} />}
+              </div> : null
+            }
+
           </DialogActions>
         </div>
       </Fragment>;
@@ -250,7 +285,7 @@ class Search extends Component {
           ? progress
           : searchResults.length
             ? content
-            : <div>Hello</div>
+            : null
         }
       </Fragment>
     );
