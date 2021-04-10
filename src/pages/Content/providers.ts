@@ -1,5 +1,5 @@
-import { hostname as imdbHostname, provider as imdbProvider } from './www.imdb.com';
-import { hostname as rottenTomatoesHostname, provider as rottenTomatoesProvider } from './www.rottentomatoes.com';
+import { hostname as imdb, provider as imdbProvider } from './www.imdb.com';
+import { hostname as rottenTomatoes, provider as rottenTomatoesProvider } from './www.rottentomatoes.com';
 
 export interface MediaInformation {
   title: string,
@@ -10,8 +10,8 @@ export interface MediaInformation {
 export type Provider = () => MediaInformation | null;
 
 export const providers: { [key: string]: Provider | null}  = {
-  [imdbHostname]: imdbProvider,
-  [rottenTomatoesHostname]: rottenTomatoesProvider,
+  [imdb]: imdbProvider,
+  [rottenTomatoes]: rottenTomatoesProvider,
 };
 
 export default providers;
