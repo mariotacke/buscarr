@@ -7,18 +7,35 @@ interface IOptions {
   [key: string]: any;
 }
 
-export async function search(searchTerm: string) {
+export async function search(searchTerm: string, year?: number) {
   const { hostname, apiKey, username } = await getStoredValueAsync<IOptions>('options');
 
-  const request: RequestInit = {
-    headers: {
-      'Content-Type': 'application/json',
-      ApiKey: apiKey,
-      UserName: username,
-    },
-  };
+  let request: Promise<Response>;
 
-  const response = await fetch(`${hostname}/api/v1/search/movie/${searchTerm}`, request);
+  if (year) {
+    request = fetch(`${hostname}/api/v1/search/movie`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ApiKey: apiKey,
+        UserName: username,
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        searchTerm: searchTerm,
+        year: year,
+      }),
+    });
+  } else {
+    request = fetch(`${hostname}/api/v1/search/movie/${searchTerm}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ApiKey: apiKey,
+        UserName: username,
+      },
+    });
+  }
+
+  const response = await request;
   const result = await response.json();
 
   console.debug('Ombi search results', result);

@@ -15,6 +15,7 @@ import ChevronLeft from '@material-ui/icons/ChevronLeft';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import { getStoredValueAsync } from '../../utils/storage';
 import InvalidOptionsMessage from '../Options/InvalidOptionsMessage';
+import { MediaInformation } from '../Content/providers';
 
 interface IOptions {
   hostname: string;
@@ -116,13 +117,13 @@ const Popup = () => {
   const [showOptionsInvalid, setShowOptionsInvalid] = useState(false);
   const [state, setState] = useState(initialState);
 
-  async function handleSearchTerm(searchTerm: any) {
+  async function handleSearchTerm(searchTerm: MediaInformation | null) {
     if (!searchTerm) {
       console.debug('No results found for current page.');
       return;
     }
 
-    const result = await api.ombi.search(searchTerm.title);
+    const result = await api.ombi.search(searchTerm.title, searchTerm.year);
 
     setState({ ...state, searchResults: result });
   }
