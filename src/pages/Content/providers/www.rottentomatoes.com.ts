@@ -1,4 +1,4 @@
-import { MediaInformation } from './providers';
+import { MediaInformation } from '.';
 
 export const hostname = 'www.rottentomatoes.com';
 

@@ -6,8 +6,10 @@ Browser extension for Chrome for adding movies to [Ombi](https://github.com/Ombi
 ![Buscarr extension popup showing add to Ombi request queue feature](./src/assets/img/add-to-ombi.png)
 
 ## Supported sites
-- [Rotten Tomatoes](https://www.rottentomatoes.com/)
 - [IMDb](https://www.imdb.com/)
+- [Rotten Tomatoes](https://www.rottentomatoes.com/)
+- [The Movie Database (TMDb)](https://www.themoviedb.org/)
+- [Trakt](https://trakt.tv/)
 
 ## Usage
 
