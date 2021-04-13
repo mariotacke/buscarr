@@ -1,6 +1,7 @@
 {
   "name": "buscarr",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Browser extension for Chrome for adding movies to Ombi's request queue while browsing various websites.",
   "license": "MIT",
   "author": "Mario Tacke <tacke.mario@gmail.com>",
   "repository": {
@@ -10,6 +11,7 @@
   "scripts": {
     "build": "node scripts/build.js",
     "start": "node scripts/webserver.js",
+    "pack": "rm -f extension.zip && zip -rj extension.zip build/*",
     "prettier": "prettier --write '**/*.{js,jsx,css,html}'"
   },
   "dependencies": {
