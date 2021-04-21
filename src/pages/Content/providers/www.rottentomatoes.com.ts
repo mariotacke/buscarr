@@ -4,7 +4,7 @@ export const hostname = 'www.rottentomatoes.com';
 
 export const provider = (): MediaInformation | null => {
   if (location.pathname.startsWith('/m/')) {
-    // URL-only strategy
+    // strategy 1: infer from url
     // const [, name1, year1, name2] = /\/m\/(?:(\w+)_(\d{4})|(\w+))/g.exec(location.href) || ['', '', '', ''];
 
     // const title = (name1 || name2 || '').replace(/_/g, ' ');
@@ -23,7 +23,7 @@ export const provider = (): MediaInformation | null => {
     //   year,
     // };
 
-    // header strategy
+    // strategy 2: read information from HTML head tags
     const titleText = document.getElementsByTagName('title')[0].innerText;
 
     // https://regex101.com/r/F8k8UQ/1

@@ -2,6 +2,7 @@ import { hostname as trakt, provider as traktProvider } from './trakt.tv';
 import { hostname as imdb, provider as imdbProvider } from './www.imdb.com';
 import { hostname as rottenTomatoes, provider as rottenTomatoesProvider } from './www.rottentomatoes.com';
 import { hostname as theMovieDb, provider as theMovieDbProvider } from './www.themoviedb.org';
+import { hostname as youtube, provider as youtubeProvider } from './www.youtube.com';
 
 export interface MediaInformation {
   title: string,
@@ -16,6 +17,7 @@ export const providers: { [key: string]: Provider | null}  = {
   [rottenTomatoes]: rottenTomatoesProvider,
   [theMovieDb]: theMovieDbProvider,
   [trakt]: traktProvider,
+  [youtube]: youtubeProvider,
 };
 
 export default providers;
