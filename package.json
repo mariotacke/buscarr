@@ -1,6 +1,6 @@
 {
   "name": "buscarr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Browser extension for Chrome for adding movies to Ombi's request queue while browsing various websites.",
   "license": "MIT",
   "author": "Mario Tacke <tacke.mario@gmail.com>",
