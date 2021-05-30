@@ -45,7 +45,10 @@ const OptionsForm: React.FC = () => {
 
       const options = await getStoredValueAsync<IOptions>('options');
 
-      setState(options);
+      if (options) {
+        setState(options);
+      }
+
       setLoading(false);
     }
 
