@@ -26,8 +26,8 @@ export const provider = (): MediaInformation | null => {
     // strategy 2: read information from HTML head tags
     const titleText = document.getElementsByTagName('title')[0].innerText;
 
-    // https://regex101.com/r/F8k8UQ/1
-    const [, title, year] = /(.*)\s\((\d{4})\)/g.exec(titleText) || ['', '', ''];
+    // https://regex101.com/r/G0Ggbg/1
+    const [, title, year] = /(.*)(?:\s\((\d{4})\))? - Rotten Tomatoes/g.exec(titleText) || ['', '', ''];
 
     return {
       title,

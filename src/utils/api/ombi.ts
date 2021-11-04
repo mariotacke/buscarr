@@ -26,18 +26,23 @@ export async function search(searchTerm: string, year?: number) {
       }),
     });
   } else {
-    request = fetch(`${hostname}/api/v1/search/movie/${searchTerm}`, {
+    request = fetch(`${hostname}/api/v1/search/movie`, {
       headers: {
         'Content-Type': 'application/json',
         ApiKey: apiKey,
         UserName: username,
       },
+      method: 'POST',
+      body: JSON.stringify({
+        searchTerm: searchTerm,
+      }),
     });
   }
 
   const response = await request;
   const result = await response.json();
 
+  console.debug(`Search Term: '${searchTerm}', Year: ${year}`);
   console.debug('Ombi search results', result);
 
   return result;
