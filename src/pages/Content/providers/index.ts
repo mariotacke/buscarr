@@ -1,5 +1,6 @@
 import { hostname as trakt, provider as traktProvider } from './trakt.tv';
 import { hostname as imdb, provider as imdbProvider } from './www.imdb.com';
+import { hostname as iptorrents, provider as iptorrentsProvider } from './iptorrents.com';
 import { hostname as rottenTomatoes, provider as rottenTomatoesProvider } from './www.rottentomatoes.com';
 import { hostname as theMovieDb, provider as theMovieDbProvider } from './www.themoviedb.org';
 import { hostname as youtube, provider as youtubeProvider } from './www.youtube.com';
@@ -14,6 +15,7 @@ export type Provider = () => MediaInformation | null;
 
 export const providers: { [key: string]: Provider | null}  = {
   [imdb]: imdbProvider,
+  [iptorrents]: iptorrentsProvider,
   [rottenTomatoes]: rottenTomatoesProvider,
   [theMovieDb]: theMovieDbProvider,
   [trakt]: traktProvider,

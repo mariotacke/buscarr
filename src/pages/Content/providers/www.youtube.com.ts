@@ -3,7 +3,7 @@ import { MediaInformation } from '.';
 export const hostname = 'www.youtube.com';
 
 const supportedExpressions = [
-  /(?<title>.*?)\s?(?:".*")?(?: - )?(?:Exclusive Official Trailer)?(?:Official Trailer.*?)?(?: Trailer.*?)? \(.*\s?(?<year>\d{4})\)/, // https://regex101.com/r/e0pHMj/4
+  /(?<title>.*?)\s?(?:".*")?(?: - )?(?:Exclusive Official Trailer)?(?:Official Trailer.*?)?(?:Official Movie Trailer.*?)?(?: Trailer.*?)? \(.*\s?(?<year>\d{4})\)/, // https://regex101.com/r/e0pHMj/4
 ];
 
 export const provider = (): MediaInformation | null => {
@@ -25,7 +25,7 @@ export const provider = (): MediaInformation | null => {
     }
 
     // strategy 2: parse video title
-    const titleText = document.querySelector('h1.title.ytd-video-primary-info-renderer')?.innerHTML || '';
+    const titleText = (document.querySelector('h1.title.ytd-video-primary-info-renderer') as HTMLElement).innerText || '';
 
     for (const expression of supportedExpressions) {
       const { title, year } = expression.exec(titleText)?.groups || {};
