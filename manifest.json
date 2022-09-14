@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Buscarr",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "js": ["src/content.tsx"],
+      "matches": [
+        "https://www.imdb.com/*",
+        "https://iptorrents.com/*",
+        "https://www.rottentomatoes.com/*",
+        "https://www.themoviedb.org/*",
+        "https://trakt.tv/*",
+        "https://www.youtube.com/*"
+      ]
+    }
+  ],
+  "options_page": "options.html",
+  "permissions": [
+    "storage"
+  ]
+}
