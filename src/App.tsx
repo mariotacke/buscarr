@@ -5,6 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -106,6 +107,22 @@ function App() {
     setRequesting(false);
   }
 
+  async function handleSearchClick (searchTerm: string) {
+    setRequesting(true);
+    setContent({ title: searchTerm });
+
+    console.log(`Searching for: "${searchTerm}"`,)
+    const result = await api.ombi.search(searchTerm);
+
+    if (!result.ok) {
+      console.log(`Could not search for content. ${result.error}`);
+    } else {
+      setSearchResults(result.value);
+    }
+
+    setRequesting(false);
+  }
+
   useEffect(() => {
     async function load(): Promise<void> {
       setLoadingContent(true);
@@ -155,7 +172,7 @@ function App() {
           sx={{
             backgroundImage: `url('${imageBaseUrl}${item.posterPath}')`,
             backgroundSize: 'cover',
-            backgroundRepeat: 'norepeat',
+            backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
             position: 'fixed',
             left: 0,
@@ -253,7 +270,81 @@ function App() {
           </DialogActions>
         </Box>
       </>
-    )
+    );
+  }
+
+  const Search = () => {
+    const [searchTerm, setSearchTerm] = useState(content?.title || '');
+
+    return (
+      <>
+        <Box
+          sx={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1565742672058-6c844f5afc2e?q=80&w=300&auto=format&fit=contain&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'bottom center',
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            height: 405,
+            zIndex: -1,
+            display: 'block',
+            opacity: 0.2,
+            filter: 'blur(0px)',
+          }}
+        />
+        <Box
+          sx={{
+            height: '400px',
+            display: 'flex',
+            flex: 1,
+            flexDirection: 'column',
+          }}
+        >
+          <DialogContent>
+            <Box>
+              <Typography variant="h6">
+                Could not find title "{searchTerm}". Try the search box below.
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 1,
+                marginTop: 2,
+              }}
+            >
+              <TextField
+                id="search-term"
+                name="search-term"
+                label="Search Term"
+                type="text"
+                disabled={requesting}
+                fullWidth
+                required
+                defaultValue={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </Box>
+          </DialogContent>
+          <DialogActions>
+              <LoadingButton
+                variant="outlined"
+                disabled={requesting}
+                loading={requesting}
+                color="primary"
+                autoFocus
+                onClick={() => handleSearchClick(searchTerm)}
+              >
+                {requesting ? 'Searching' : 'Search'}
+              </LoadingButton>
+          </DialogActions>
+        </Box>
+      </>
+    );
   }
 
   return (
@@ -262,7 +353,8 @@ function App() {
       <ThemeProvider theme={theme}>
         {loadingContent && <LoadingContent />}
         {searching && <Searching />}
-        {!loadingContent && !searching && searchResults.length && <Page item={searchResults[position]} />}
+        {!loadingContent && !searching && Boolean(searchResults.length) && <Page item={searchResults[position]} />}
+        {!loadingContent && !searching && !Boolean(searchResults.length) && <Search />}
       </ThemeProvider>
     </>
   );
