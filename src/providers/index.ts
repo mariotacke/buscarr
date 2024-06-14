@@ -23,16 +23,26 @@ export function initialize (location: Location) {
     });
   });
 
-  if (!provider) {
+  if (provider) {
+    console.log(`Provider found for page: ${provider.name}`);
+  } else {
     console.log(`No provider found for page.`);
-
-    return;
   }
-
-  console.log(`Provider found for page: ${provider.name}`);
 
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.from === 'popup' && message.subject === 'info') {
+      // use text selection for one-off searches
+      const selection = window.getSelection()?.toString();
+
+      if (selection) {
+        console.log(`Text selected. Using "${selection}" as search term`)
+        return sendResponse({ title: selection });
+      }
+
+      if (!provider) {
+        return sendResponse(null);
+      }
+
       const content = provider.apply();
 
       return sendResponse(content);
