@@ -8,8 +8,8 @@ export function apply () {
   if (location.pathname.startsWith('/m/')) {
     const titleText = document.getElementsByTagName('title')[0].innerText;
 
-    // https://regex101.com/r/G0Ggbg/1
-    const [, title, year] = /(.*)(?:\s\((\d{4})\))? - Rotten Tomatoes/g.exec(titleText) || ['', '', ''];
+    // https://regex101.com/r/PcR1BH/1
+    const [, title, year] = /(.*)(?:\s\((\d{4})\))? \| Rotten Tomatoes/g.exec(titleText) || ['', '', ''];
 
     return {
       title,
